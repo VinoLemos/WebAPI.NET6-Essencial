@@ -1,0 +1,79 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/vino/Documents/Workspaces/CSharp/APICatalogo/APICatalogo.csproj": {}
+  },
+  "projects": {
+    "/home/vino/Documents/Workspaces/CSharp/APICatalogo/APICatalogo.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/vino/Documents/Workspaces/CSharp/APICatalogo/APICatalogo.csproj",
+        "projectName": "APICatalogo",
+        "projectPath": "/home/vino/Documents/Workspaces/CSharp/APICatalogo/APICatalogo.csproj",
+        "packagesPath": "/home/vino/.nuget/packages/",
+        "outputPath": "/home/vino/Documents/Workspaces/CSharp/APICatalogo/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/vino/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.7, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[6.0.2, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.2.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/6.0.106/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
