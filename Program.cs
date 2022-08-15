@@ -25,13 +25,45 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Endpoints
-app.MapGet("/tarefas", async (AppDbContext db)=> await db.Tarefas.ToListAsync());
-app.MapPost("/tarefas", async (Tarefa tarefa, AppDbContext db) => 
+app.MapGet("/tarefas", async (AppDbContext db) => await db.Tarefas.ToListAsync());
+app.MapGet("/tarefas/{id}", async (AppDbContext db, int id) =>
+            await db.Tarefas.FindAsync(id) is Tarefa tarefa ?
+            Results.Ok(tarefa) : Results.NotFound());
+
+app.MapGet("/tarefas/concluida", async (AppDbContext db) =>
+            await db.Tarefas.Where(t => t.IsConcluida).ToListAsync());
+
+app.MapPost("/tarefas", async (Tarefa tarefa, AppDbContext db) =>
             {
                 db.Tarefas.Add(tarefa);
                 await db.SaveChangesAsync();
                 return Results.Created($"/tarefas/{tarefa.Id}", tarefa);
             });
+
+app.MapPut("/tarefas/{id}", async (int id, Tarefa inputTarefa, AppDbContext db) =>
+            {
+                var tarefa = await db.Tarefas.FindAsync(id);
+
+                if (tarefa is null) return Results.NotFound("Tarefa não encontrada");
+
+                tarefa.Nome = inputTarefa.Nome;
+                tarefa.IsConcluida = inputTarefa.IsConcluida;
+
+                await db.SaveChangesAsync();
+                return Results.NoContent();
+            });
+
+app.MapDelete("/tarefas/{id}", async (int id, AppDbContext db) =>
+            {
+                if (await db.Tarefas.FindAsync(id) is Tarefa tarefa)
+                {
+                    db.Tarefas.Remove(tarefa);
+                    await db.SaveChangesAsync();
+                    return Results.Ok(tarefa);
+                }
+                return Results.NotFound();
+            }
+        );
 
 app.Run();
 
@@ -44,8 +76,8 @@ class Tarefa
 
 class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
-    {}
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    { }
 
     public DbSet<Tarefa> Tarefas => Set<Tarefa>();
 }
