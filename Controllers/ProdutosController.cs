@@ -1,4 +1,5 @@
 using APICatalogo.Context;
+using APICatalogo.Filtes;
 using APICatalogo.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +18,12 @@ namespace APICatalogo.Controllers
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(ApiLoggingFilter))]
         public ActionResult<IEnumerable<Produto>> Get()
         {
             try
             {
-                var produtos = _context.Produtos.AsNoTracking().ToList();
+                var produtos = _context.Produtos?.AsNoTracking().ToList();
                 return produtos == null ? NotFound("Produtos não encontrados") : produtos;
             }
             catch (System.Exception)
@@ -36,7 +38,7 @@ namespace APICatalogo.Controllers
         {
             try
             {
-                var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+                var produto = _context.Produtos?.FirstOrDefault(p => p.ProdutoId == id);
                 return produto == null ? NotFound($"Produto de id {id} não encontrado") : produto;
             }
             catch (System.Exception)
@@ -54,7 +56,7 @@ namespace APICatalogo.Controllers
                 if (produto is null)
                     return BadRequest();
 
-                _context.Produtos.Add(produto);
+                _context.Produtos?.Add(produto);
                 _context.SaveChanges();
                 return new CreatedAtRouteResult("ObterProduto",
                         new { id = produto.ProdutoId }, produto);
@@ -90,14 +92,14 @@ namespace APICatalogo.Controllers
         {
             try
             {
-                var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+                var produto = _context.Produtos?.FirstOrDefault(p => p.ProdutoId == id);
 
                 if (produto is null)
                 {
                     return NotFound("Produto de id {id} não encontrado");
                 }
 
-                _context.Produtos.Remove(produto);
+                _context.Produtos?.Remove(produto);
                 _context.SaveChanges();
 
                 return Ok(produto);
