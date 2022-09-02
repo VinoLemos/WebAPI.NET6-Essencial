@@ -10,15 +10,17 @@ namespace APICatalogo.Controllers
     public class CategoriasController : ControllerBase
     {
         private readonly AppDbContext _context;
-
-        public CategoriasController(AppDbContext context)
+        private readonly ILogger _logger;
+        public CategoriasController(AppDbContext context, ILogger<CategoriasController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<Categoria>> Get()
         {
+            _logger.LogInformation($" ======== GET api/categorias/produtos ========");
             try
             {
                 var categorias = _context.Categorias.AsNoTracking().ToList();
@@ -34,6 +36,7 @@ namespace APICatalogo.Controllers
         [HttpGet("{id:int}", Name = "ObterCategoria")]
         public ActionResult<Categoria> Get(int id)
         {
+            _logger.LogInformation($" ======== GET api/categorias/id = {id} ========");
             try
             {
                 var categoria = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
@@ -49,6 +52,7 @@ namespace APICatalogo.Controllers
         [HttpGet("produtos")]
         public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
         {
+            _logger.LogInformation(" ======== GET api/categorias/produtos ========");
             try
             {
                 return _context.Categorias.Include(p => p.Produtos).Where(c => c.CategoriaId <= 5).ToList();
