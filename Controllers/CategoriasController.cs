@@ -1,5 +1,6 @@
 using APICatalogo.Context;
 using APICatalogo.Models;
+using APICatalogo.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,11 +10,11 @@ namespace APICatalogo.Controllers
     [Route("[controller]")]
     public class CategoriasController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnitOfWork _uof;
         private readonly ILogger _logger;
-        public CategoriasController(AppDbContext context, ILogger<CategoriasController> logger)
+        public CategoriasController(IUnitOfWork context, ILogger<CategoriasController> logger)
         {
-            _context = context;
+            _uof = context;
             _logger = logger;
         }
 
@@ -23,7 +24,7 @@ namespace APICatalogo.Controllers
             _logger.LogInformation($" ======== GET api/categorias/produtos ========");
             try
             {
-                var categorias = _context.Categorias.AsNoTracking().ToList();
+                var categorias = _uof.CategoriaRepository.Get().ToList();
                 return categorias == null ? NotFound("Categorias não encontradas") : categorias;
             }
             catch (System.Exception)
@@ -39,7 +40,7 @@ namespace APICatalogo.Controllers
             _logger.LogInformation($" ======== GET api/categorias/id = {id} ========");
             try
             {
-                var categoria = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
+                var categoria = _uof.CategoriaRepository.GetById(c => c.CategoriaId == id);
                 return categoria == null ? NotFound($"Categoria de id {id} não encontrada") : categoria;
             }
             catch (System.Exception)
@@ -52,54 +53,30 @@ namespace APICatalogo.Controllers
         [HttpGet("produtos")]
         public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
         {
-            _logger.LogInformation(" ======== GET api/categorias/produtos ========");
-            try
-            {
-                return _context.Categorias.Include(p => p.Produtos).Where(c => c.CategoriaId <= 5).ToList();
-            }
-            catch (System.Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                 "Ocorreu um erro ao tratar sua solicitação");
-            }
-            //return _context.Categorias.Include(p => p.Produtos).ToList();
+            return _uof.CategoriaRepository.GetCategoriasProdutos().ToList();
+            //return _uof.Categorias.Include(p => p.Produtos).ToList();
         }
 
         [HttpPost]
         public ActionResult Post(Categoria categoria)
         {
-            try
-            {
                 if (categoria is null) return BadRequest();
 
-                _context.Categorias.Add(categoria);
-                _context.SaveChanges();
+                _uof.CategoriaRepository.Add(categoria);
+                _uof.Commit();
                 return new CreatedAtRouteResult("ObterCategoria",
                     new { id = categoria.CategoriaId }, categoria);
-            }
-            catch (System.Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Ocorreu um erro ao tratar sua solicitação");
-            }
         }
 
         [HttpPut("{id:int}")]
         public ActionResult Put(int id, Categoria categoria)
         {
-            try
-            {
                 if (id != categoria.CategoriaId) return BadRequest($"Categoria de id {id} não encontrada");
 
-                _context.Entry(categoria).State = EntityState.Modified;
-                _context.SaveChanges();
+                _uof.CategoriaRepository.Update(categoria);
+                _uof.Commit();
 
                 return Ok(categoria);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tratar sua solicitação");
-            }
         }
 
         [HttpDelete("{id:int}")]
@@ -107,12 +84,12 @@ namespace APICatalogo.Controllers
         {
             try
             {
-                var categoria = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
+                var categoria = _uof.CategoriaRepository.GetById(c => c.CategoriaId == id);
 
                 if (categoria is null) return NotFound($"Categoria de id {id} não encontrada");
 
-                _context.Categorias.Remove(categoria);
-                _context.SaveChanges();
+                _uof.CategoriaRepository.Delete(categoria);
+                _uof.Commit();
 
                 return Ok(categoria);
             }

@@ -1,6 +1,7 @@
 using APICatalogo.Context;
 using APICatalogo.Filtes;
 using APICatalogo.Models;
+using APICatalogo.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,105 +11,68 @@ namespace APICatalogo.Controllers
     [Route("[controller]")]
     public class ProdutosController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnitOfWork _uof;
 
-        public ProdutosController(AppDbContext context)
+        public ProdutosController(IUnitOfWork context)
         {
-            _context = context;
+            _uof = context;
         }
 
         [HttpGet]
         [ServiceFilter(typeof(ApiLoggingFilter))]
         public ActionResult<IEnumerable<Produto>> Get()
         {
-            try
-            {
-                var produtos = _context.Produtos?.AsNoTracking().ToList();
+                var produtos = _uof.ProdutoRepository.Get().ToList();
                 return produtos == null ? NotFound("Produtos não encontrados") : produtos;
-            }
-            catch (System.Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um erro ao tratar sua solicitação");
-            }
         }
 
         [HttpGet("{id:int}", Name = "ObterProduto")]
         public ActionResult<Produto> Get(int id)
         {
-            try
-            {
-                var produto = _context.Produtos?.FirstOrDefault(p => p.ProdutoId == id);
+                var produto = _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
                 return produto == null ? NotFound($"Produto de id {id} não encontrado") : produto;
-            }
-            catch (System.Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um erro ao tratar sua solicitação");
-            }
+        }
+
+        [HttpGet("menorpreco")]
+        public ActionResult<IEnumerable<Produto>> GetProdutosPrecos()
+        {
+            return _uof.ProdutoRepository.GetProdutosPorPreco().ToList();
         }
 
         [HttpPost]
         public ActionResult Post(Produto produto)
         {
-            try
-            {
-                if (produto is null)
-                    return BadRequest();
-
-                _context.Produtos?.Add(produto);
-                _context.SaveChanges();
+                _uof.ProdutoRepository.Add(produto);
+                _uof.Commit();
                 return new CreatedAtRouteResult("ObterProduto",
                         new { id = produto.ProdutoId }, produto);
-            }
-            catch (System.Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um erro ao tratar sua solicitação");
-            }
         }
 
         [HttpPut("{id:int}")]
         public ActionResult Put(int id, Produto produto)
         {
-            try
-            {
                 if (id != produto.ProdutoId) return BadRequest();
 
-                _context.Entry(produto).State = EntityState.Modified;
-                _context.SaveChanges();
+                _uof.ProdutoRepository.Update(produto);
+                _uof.Commit();
 
                 return Ok(produto);
-            }
-            catch (System.Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um erro ao tratar sua solicitação");
-            }
         }
 
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            try
-            {
-                var produto = _context.Produtos?.FirstOrDefault(p => p.ProdutoId == id);
+                var produto = _uof.ProdutoRepository?.GetById(p => p.ProdutoId == id);
 
                 if (produto is null)
                 {
                     return NotFound("Produto de id {id} não encontrado");
                 }
 
-                _context.Produtos?.Remove(produto);
-                _context.SaveChanges();
+                _uof.ProdutoRepository?.Delete(produto);
+                _uof.Commit();
 
                 return Ok(produto);
-            }
-            catch (System.Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um erro ao tratar sua solicitação");
-            }
         }
     }
 }
