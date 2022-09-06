@@ -22,6 +22,5 @@ namespace APICatalogo.Models;
         [StringLength(300)]
         public string? ImagemUrl { get; set; }
 
-        [JsonIgnore]
         public ICollection<Produto>? Produtos { get; set; }
     }
