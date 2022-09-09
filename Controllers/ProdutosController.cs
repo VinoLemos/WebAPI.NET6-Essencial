@@ -35,8 +35,8 @@ namespace APICatalogo.Controllers
         public ActionResult<ProdutoDTO> Get(int id)
         {
             var produto = _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
-            var produtosDto = _mapper.Map<ProdutoDTO>(produto);
-            return produtosDto;
+            var produtoDto = _mapper.Map<ProdutoDTO>(produto);
+            return produtoDto;
         }
 
         [HttpGet("menorpreco")]
