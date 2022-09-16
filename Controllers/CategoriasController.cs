@@ -1,6 +1,7 @@
 using APICatalogo.Context;
 using APICatalogo.DTOs;
 using APICatalogo.Models;
+using APICatalogo.Pagination;
 using APICatalogo.Repository;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -24,12 +25,23 @@ namespace APICatalogo.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<CategoriaDTO>> Get()
+        public ActionResult<IEnumerable<CategoriaDTO>> Get([FromQuery]CategoriasParameters categoriasParameters)
         {
             _logger.LogInformation($" ======== GET api/categorias/produtos ========");
             try
             {
-                var categorias = _uof.CategoriaRepository.Get().ToList();
+                var categorias = _uof.CategoriaRepository.GetCategoriasPaginas(categoriasParameters);
+
+                var metadata = new
+                {
+                    categorias.TotalCount,
+                    categorias.PageSize,
+                    categorias.CurrentPage,
+                    categorias.TotalPages,
+                    categorias.HasNext,
+                    categorias.HasPrevious
+                };
+            
                 var categoriasDTO = _mapper.Map<List<CategoriaDTO>>(categorias);
                 return categoriasDTO == null ? NotFound("Categorias não encontradas") : categoriasDTO;
             }
