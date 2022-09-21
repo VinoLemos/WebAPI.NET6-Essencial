@@ -6,6 +6,7 @@ using APICatalogo.Repository;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace APICatalogo.Controllers
 {
@@ -25,12 +26,24 @@ namespace APICatalogo.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoriaDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<CategoriaDTO>>> Get([FromQuery] CategoriasParameters categoriasParameters)
         {
             _logger.LogInformation($" ======== GET api/categorias/produtos ========");
             try
             {
-                var categorias = await _uof.CategoriaRepository.Get().ToListAsync();
+                var categorias = await _uof.CategoriaRepository.GetCategoriasPaginas(categoriasParameters);
+
+                var metadata = new
+                {
+                    categorias.TotalCount,
+                    categorias.PageSize,
+                    categorias.CurrentPage,
+                    categorias.TotalPages,
+                    categorias.HasNext,
+                    categorias.HasPrevious
+                };
+
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
 
                 var categoriasDTO = _mapper.Map<List<CategoriaDTO>>(categorias);
                 return categoriasDTO == null ? NotFound("Categorias não encontradas") : categoriasDTO;
