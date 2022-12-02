@@ -2,14 +2,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration
+                    .GetConnectionString("Contatos") ?? "Data Source=Contatos.db";
 
 // Add services to the container.
-
 builder.Services.AddControllers().AddNewtonsoftJson();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("ContatosDB"));
+builder.Services.AddSqlite<ContatosDb>(connectionString);
 
 var app = builder.Build();
 
@@ -27,25 +28,25 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Endpoints
-app.MapGet("/contatos", async (AppDbContext db) => await db.Contatos.ToListAsync());
+app.MapGet("/contatos", async (ContatosDb db) => await db.Contatos.ToListAsync());
 
-app.MapGet("/contatos/{id}", async (AppDbContext db, int id) =>
+app.MapGet("/contatos/{id}", async (ContatosDb db, int id) =>
             await db.Contatos.FindAsync(id) is Contato contato ?
             Results.Ok(contato) : Results.NotFound("Contato não encontrado!"));
 
-app.MapGet("/contatos/email/{email}", async (AppDbContext db, string email) =>
+app.MapGet("/contatos/email/{email}", async (ContatosDb db, string email) =>
             await db.Contatos.Where(c => c.Email == email).ToListAsync());
 
-app.MapGet("/contatos/nome/{nome}", async (AppDbContext db, string nome) =>
+app.MapGet("/contatos/nome/{nome}", async (ContatosDb db, string nome) =>
             await db.Contatos.Where(c => c.Nome == nome).ToListAsync());
 
-app.MapPost("/contatos", async ([FromBody]Contato contato, AppDbContext db) =>
+app.MapPost("/contatos", async ([FromBody] Contato contato, ContatosDb db) =>
             {
                 db.Contatos.Add(contato);
                 await db.SaveChangesAsync();
                 return Results.Created($"/contatos/{contato.Id}", contato);
             });
-app.MapPut("/contatos/{id}", async (int id, [FromBody]Contato novoContato, AppDbContext db) =>
+app.MapPut("/contatos/{id}", async (int id, [FromBody] Contato novoContato, ContatosDb db) =>
             {
                 var contato = await db.Contatos.FindAsync(id);
 
@@ -61,7 +62,7 @@ app.MapPut("/contatos/{id}", async (int id, [FromBody]Contato novoContato, AppDb
                 return Results.Ok(contato);
             });
 
-app.MapDelete("/contatos/{id}", async (int id, AppDbContext db) =>
+app.MapDelete("/contatos/{id}", async (int id, ContatosDb db) =>
                 {
                     if (await db.Contatos.FindAsync(id) is Contato contato)
                     {
@@ -84,9 +85,9 @@ class Contato
     public int Celular { get; set; }
 }
 
-class AppDbContext : DbContext
+class ContatosDb : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    public ContatosDb(DbContextOptions<ContatosDb> options) : base(options)
     {
 
     }
