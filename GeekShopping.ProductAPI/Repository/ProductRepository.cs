@@ -2,7 +2,7 @@
 using GeekShopping.ProductAPI.Data.ValueObjects;
 using GeekShopping.ProductAPI.Model;
 using GeekShopping.ProductAPI.Model.Context;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace GeekShopping.ProductAPI.Repository
 {
@@ -29,7 +29,7 @@ namespace GeekShopping.ProductAPI.Repository
 
         public async Task<IEnumerable<ProductVO>> FindAll()
         {
-            var products = await _context.Products.ToListAsync();
+            List<Product> products = await _context.Products.AsQueryable().ToListAsync();
 
             return _mapper.Map<List<ProductVO>>(products);
         }
