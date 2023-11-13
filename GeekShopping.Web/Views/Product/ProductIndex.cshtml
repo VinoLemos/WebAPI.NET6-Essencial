@@ -32,6 +32,14 @@
                     <td>@item.Name</td>
                     <td>@item.CategoryName</td>
                     <td>@item.Price.ToString("C", new CultureInfo("pt-BR"))</td>
+                    <td>
+                        <a asp-action="ProductEdit" class="btn btn-success" asp-route-id="@item.Id">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a asp-action="ProductDelete" class="btn btn-danger" asp-route-id="@item.Id">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
                 </tr>
             }
         </tbody>
