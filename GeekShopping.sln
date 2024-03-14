@@ -9,7 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{AB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeekShopping.ProductAPI", "GeekShopping.ProductAPI\GeekShopping.ProductAPI.csproj", "{1903395C-1CAF-4D7B-B7A7-4EBA227D62CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeekShopping.Web", "GeekShopping.Web\GeekShopping.Web.csproj", "{4B1D24F0-09B7-4952-9215-F9EB585AB908}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeekShopping.Web", "GeekShopping.Web\GeekShopping.Web.csproj", "{4B1D24F0-09B7-4952-9215-F9EB585AB908}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeekShopping.IdentityServer", "GeekShopping.IdentityServer\GeekShopping.IdentityServer.csproj", "{EA0F0012-F7D0-4C6C-A5CA-0346A32F30A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +27,10 @@ Global
 		{4B1D24F0-09B7-4952-9215-F9EB585AB908}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B1D24F0-09B7-4952-9215-F9EB585AB908}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B1D24F0-09B7-4952-9215-F9EB585AB908}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA0F0012-F7D0-4C6C-A5CA-0346A32F30A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA0F0012-F7D0-4C6C-A5CA-0346A32F30A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA0F0012-F7D0-4C6C-A5CA-0346A32F30A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA0F0012-F7D0-4C6C-A5CA-0346A32F30A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +38,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{1903395C-1CAF-4D7B-B7A7-4EBA227D62CD} = {AB375A6E-E678-48DC-A64B-56BCCB0FDEC5}
 		{4B1D24F0-09B7-4952-9215-F9EB585AB908} = {2430087C-D20A-4F6E-85E6-960BD9D51193}
+		{EA0F0012-F7D0-4C6C-A5CA-0346A32F30A8} = {AB375A6E-E678-48DC-A64B-56BCCB0FDEC5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {75DC7C66-35E4-46AC-9610-FC44A9E29F8F}
